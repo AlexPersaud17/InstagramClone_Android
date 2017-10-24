@@ -1,5 +1,6 @@
 package com.alexpersaud.instagramclone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -28,6 +29,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     RelativeLayout relativeLayout;
     ImageView igBackground;
 
+
+    public void showUserList(){
+        Intent intent = new Intent(getApplicationContext(), UserListActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onKey(View view, int keyCode, KeyEvent event) {
@@ -73,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
-                            Toast.makeText(MainActivity.this, "Sign Up Success", Toast.LENGTH_SHORT).show();
+                            showUserList();
                         } else {
                             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -84,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void done(ParseUser user, ParseException e) {
                         if(user != null){
-                            Toast.makeText(MainActivity.this, "Log In Success", Toast.LENGTH_SHORT).show();
+                            showUserList();
                         }else{
                             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -111,6 +117,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         relativeLayout.setOnClickListener(this);
         igBackground.setOnClickListener(this);
+
+        if(ParseUser.getCurrentUser() != null){
+            showUserList();
+        }
 
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
