@@ -2,10 +2,13 @@ package com.alexpersaud.instagramclone;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,13 +18,25 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
     EditText username;
     EditText password;
     Boolean signInModeActive = false;
     TextView changeSignInMode;
     Button signInButton;
+    RelativeLayout relativeLayout;
+    ImageView igBackground;
+
+
+    @Override
+    public boolean onKey(View view, int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
+            signIn(view);
+        }
+
+        return false;
+    }
 
 
     @Override
@@ -37,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 signInButton.setText("Log In");
                 changeSignInMode.setText("Don't have an account? Sign up.");
             }
+        }else if (view.getId() == R.id.relativeLayout || view.getId() == R.id.igBackground){
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
     }
 
@@ -55,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
-                            Log.i("Sign Up", "Successful!");
+                            Toast.makeText(MainActivity.this, "Sign Up Success", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -85,8 +103,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         changeSignInMode = (TextView) findViewById(R.id.changeSignInMode);
         changeSignInMode.setOnClickListener(this);
 
+        password = (EditText) findViewById(R.id.password);
+        password.setOnKeyListener(this);
+
+        relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        igBackground = (ImageView) findViewById(R.id.igBackground);
+
+        relativeLayout.setOnClickListener(this);
+        igBackground.setOnClickListener(this);
+
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
-
-
 }
